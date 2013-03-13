@@ -43,11 +43,17 @@ _jQuery Validate_ supports all fields of the HTML5 and uses <a href="http://www.
 	</tr>
 	<tr>
 		<td><code>data-conditional</code></td>
-		<td>Accepts one or more function names separated by spaces. These functions must: 
+		<td>A function name. The function must: 
 			<ul>
 			<li>Return a boolean value describing whether the validation passed (true) or failed (false)</li>
 			<li>Be methods of a JavaScript object named <code>conditional</code>.</li>
 			</ul>
+		</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><code>data-confirm</code></td>
+		<td>A string specifying the HTML `id` of another element. The value of this field will be compared to the value of the element with the specified `id`.
 		</td>
 		<td></td>
 	</tr>
@@ -60,6 +66,16 @@ _jQuery Validate_ supports all fields of the HTML5 and uses <a href="http://www.
 		<td><code>data-mask</code></td>
 		<td>Accepts a mask to change the field value to the specified format. This mask uses the matched groups from the regular expression passed to the <a href="#data-pattern"><code>data-pattern</code></a> attribute.</td>
 		<td><code>${0}</code></td>
+	</tr>
+	<tr>
+		<td><code>data-maxlength</code></td>
+		<td>An integer describing the maximum length of the value. When applied to a checkbox, this will count the total number of checked checkboxes with the same name as the current checkbox element.</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><code>data-minlength</code></td>
+		<td>An integer describing the minimum length of the value. When applied to a checkbox, this will count the total number of checked checkboxes with the same name as the current checkbox element.</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td><code>data-pattern</code></td>
