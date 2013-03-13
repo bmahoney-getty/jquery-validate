@@ -6,18 +6,24 @@
 
 > Requires: _jQuery 1.7+_.
 
-To use _jQuery Validate_ you just need to include in your code a version of the <a href="http://jquery.com/" target="_blank">jQuery library</a> equal or more recent than `1.7` and a file with the plugin. <a href="https://www.dropbox.com/s/p5xhpb52572xy5b/jQuery%20Validate%201.1.2.zip" target="_blank">Click here to download the plugin</a>.
+##Setup
+###1. Include the Libraries
+To use _jQuery Validate_, your JavaScript needs to include references to
+* The <a href="http://jquery.com/" target="_blank">jQuery</a> library (v1.7+)
+* The jQuery Validate library (<a href="https://www.dropbox.com/s/p5xhpb52572xy5b/jQuery%20Validate%201.1.2.zip" target="_blank">Click here to download the plugin</a>)
 
-After this, you just need select your form and calling the `jQuery.fn.validate` method.
+###2. Validate Your Form(s)
+Use jQuery to select your form and call the `jQuery.fn.validate` method on it.
 
-See a example:
+**Example**:
 ```javascript
 jQuery('form').validate();
 ```
 
-After calling the `jQuery.fn.validate` method, you can validate your fields using <a href="http://www.w3.org/TR/2011/WD-html5-20110525/elements.html#embedding-custom-non-visible-data-with-the-data-attributes" target="_blank">data attributes</a>, that are valid to the <a href="http://www.w3.org/TR/html5/" target="_blank">HTML5</a>, according to the <a href="http://www.w3.org/" target="_blank">W3C</a>.
+###3. Update Form Fields
+Calling `jQuery.fn.validate` on your form element will turn on validation for that form. But none of form's field elements have any validation rules associated with them yet. _jQuery Validate_ uses <a href="http://www.w3.org/TR/2011/WD-html5-20110525/elements.html#embedding-custom-non-visible-data-with-the-data-attributes" target="_blank">`data-*`</a> attributes to wire up your validation rules.
 
-See a example to required field:
+**Example**:
 ```html
 <form>
 	<input type="text" data-required />
@@ -26,234 +32,171 @@ See a example to required field:
 
 _jQuery Validate_ supports all fields of the HTML5 and uses <a href="http://www.w3.org/WAI/PF/aria/" target="_blank">WAI-ARIA</a> for accessibility. You can use several attributes to your validations.
 
-## Attributes
+
+## data-* Attributes
 
 <table>
 	<tr>
-		<th width="110px">Attribute</th>
-
+		<th width="130px">Attribute</th>
 		<th>Description</th>
-
-		<th width="75px">Default</th>
+		<th width="70px">Default</th>
 	</tr>
-
 	<tr>
-		<td>data-conditional</td>
-
-		<td>Accepts one or more indexes separated by spaces from the `conditional` object that should contain a the boolean return function.</td>
-
+		<td><code>data-conditional</code></td>
+		<td>Accepts one or more function names separated by spaces. These functions must: 
+			<ul>
+			<li>Return a boolean value describing whether the validation passed (true) or failed (false)</li>
+			<li>Be methods of a JavaScript object named <code>conditional</code>.</li>
+			</ul>
+		</td>
 		<td></td>
 	</tr>
-
 	<tr>
-		<td>data-ignore-case</td>
-
-		<td>Accepts a boolean value to specify if field is case-insensitive.</td>
-
-		<td>true</td>
+		<td><code>data-ignore-case</code></td>
+		<td>Accepts a boolean value to specify if the field is case-insensitive.</td>
+		<td><code>true</code></td>
 	</tr>
-
 	<tr>
-		<td>data-mask</td>
-
-		<td>Accepts a mask to change the field value to the specified format. The mask should use the character groups of the regular expression passed to the <a href="#data-pattern">`data-pattern`</a> attribute.</td>
-
-		<td>${0}</td>
+		<td><code>data-mask</code></td>
+		<td>Accepts a mask to change the field value to the specified format. This mask uses the matched groups from the regular expression passed to the <a href="#data-pattern"><code>data-pattern</code></a> attribute.</td>
+		<td><code>${0}</code></td>
 	</tr>
-
 	<tr>
-		<td>data-pattern</td>
-
-		<td>Accepts a regular expression to test the field value.</td>
-
-		<td>/(?:)/</td>
+		<td><code>data-pattern</code></td>
+		<td>Accepts a regular expression to test the field value. <i>Note: regular expression delimiters (usually '/') are not needed.</i></td>
+		<td><code>(?:)</code></td>
 	</tr>
-
 	<tr>
-		<td>data-prepare</td>
-
-		<td>Accepts a index from the `prepare` object that should contain a function to receive the field value and returns a new value treated.</td>
-
+		<td><code>data-prepare</code></td>
+		<td>Accepts a function name. The function must exist on an object named <code>prepare</code>. The function can manipulate the value before validation is run on it. It returns the updated value. <i>Note: this does not change the actual field value in the HTML.</i></td>
 		<td></td>
 	</tr>
-
 	<tr>
-		<td>data-required</td>
-
+		<td><code>data-required</code></td>
 		<td>Accepts a boolean value to specify if field is required.</td>
-
-		<td>false</td>
+		<td><code>false</code></td>
 	</tr>
-
 	<tr>
-		<td>data-trim</td>
-
-		<td>Accepts a boolean value. If true, removes the spaces from the ends in the field value. (The field value is not changed)</td>
-
-		<td>false</td>
+		<td><code>data-trim</code></td>
+		<td>Accepts a boolean value. If true, trims whitespace from the beginning and end of the value before validation. <i>Note: this does not change the actual field value in the HTML.</i></td>
+		<td><code>false</code></td>
 	</tr>
-
 	<tr>
-		<td>data-validate</td>
-
-		<td>You can use the `data-validate` to calling extensions.</td>
-
+		<td><code>data-validate</code></td>
+		<td>Accepts the name of an object that extends the validator (via <code>jQuery.fn.validateExtension</code>. More information about these extensions below.</td>
 		<td></td>
 	</tr>
 </table>
 
 ## Parameters ##
-
+You can override the default _jQuery Validate_ behavior by setting the following properties with `jQuery.validateSetup`
 <table>
 	<tr>
 		<th width="110px">Parameter</th>
-
 		<th>Description</th>
-
-		<th width="75px">Default</th>
+		<th width="70px">Default</th>
 	</tr>
-
 	<tr>
-		<td>conditional</td>
-
-		<td>Accepts a object to store functions from validation.</td>
-
+		<td><code>conditional</code></td>
+		<td>An object with custom validation methods.</td>
 		<td></td>
 	</tr>
-
 	<tr>
-		<td>filter</td>
-
+		<td><code>filter</code></td>
 		<td>Accepts a selector string or function to filter the validated fields.</td>
-
-		<td>*</td>
+		<td><code>*</code></td>
 	</tr>
 
 	<tr>
-		<td>namespace</td>
-
-		<td>A namespace used in all delegates events.</td>
-
-		<td>validate</td>
+		<td><code>namespace</code></td>
+		<td>A namespace used for all delegated events.</td>
+		<td><code>validate</code></td>
+	</tr>
+	<tr>
+		<td><code>onBlur</code></td>
+		<td>Accepts a boolean value. If true, validation will be triggered when focus leaves the field.</td>
+		<td><code>false</code></td>
+	</tr>
+	<tr>
+		<td><code>onChange</code></td>
+		<td>Accepts a boolean value. If true, validation will be triggered when the field's selection, checked state, or value changes.</td>
+		<td><code>false</code></td>
+	</tr>
+	<tr>
+		<td><code>onKeyup</code></td>
+		<td>Accepts a boolean value. If true, validation will be triggered after any key is pressed.</td>
+		<td><code>false</code></td>
 	</tr>
 
 	<tr>
-		<td>onBlur</td>
-
-		<td>Accepts a boolean value. If true, triggers the validation when blur the field.</td>
-
-		<td>false</td>
+		<td><code>onSubmit</code></td>
+		<td>Accepts a boolean value. If true, validation will be triggered when the form is submitted.</td>
+		<td><code>true</code></td>
 	</tr>
-
 	<tr>
-		<td>onChange</td>
-
-		<td>Accepts a boolean value. If true, triggers the validation when change the field value.</td>
-
-		<td>false</td>
-	</tr>
-
-	<tr>
-		<td>onKeyup</td>
-
-		<td>Accepts a boolean value. If true, triggers the validation when press any key.</td>
-
-		<td>false</td>
-	</tr>
-
-	<tr>
-		<td>onSubmit</td>
-
-		<td>Accepts a boolean value. If true, triggers the validation when submit the form.</td>
-
-		<td>true</td>
-	</tr>
-
-	<tr>
-		<td>prepare</td>
-
-		<td>Accepts a object to store functions to prepare the field values.</td>
-
+		<td><code>prepare</code></td>
+		<td>An object with functions that can create or alter field values before they are validated. Select which of the object's functions to run on each field with the <code>data-prepare</code> attribute.</td>
 		<td></td>
 	</tr>
-
 	<tr>
-		<td>sendForm</td>
-
-		<td>Accepts a boolean value. If false, prevents submit the form (Useful to submit forms via <a href="http://api.jquery.com/jQuery.ajax/" target="_blank">AJAX</a>).</td>
-
-		<td>true</td>
+		<td><code>sendForm</code></td>
+		<td>Accepts a boolean value. If false, prevents the default submit action of the form. (Useful to submit forms via <a href="http://api.jquery.com/jQuery.ajax/" target="_blank">AJAX</a>).</td>
+		<td><code>true</code></td>
 	</tr>
-
 	<tr>
-		<td>waiAria</td>
-
+		<td><code>waiAria</code></td>
 		<td>Accepts a boolean value. If false, disables <a href="http://www.w3.org/WAI/PF/aria/" target="_blank">WAI-ARIA</a>.</td>
-
-		<td>true</td>
+		<td><code>true</code></td>
 	</tr>
-
 	<tr>
-		<td>sendInvalidForm</td>
-
-		<td>If true, send invalid forms.</td>
-
-		<td>false</td>
+		<td><code>sendInvalidForm</code></td>
+		<td>If true, the form will activate the default submit action even if some form fields fail validation.</td>
+		<td><code>false</code></td>
 	</tr>
 </table>
 
 ## Callbacks ##
-
+Callbacks are run after each field is validated or after the entire form has been validated, depending on the success or failure state. 
 <table>
 	<tr>
 		<th width="110px">Callback</th>
-
 		<th>Description</th>
 	</tr>
-
 	<tr>
-		<td>valid</td>
+		<td><code>valid</code></td>
 
-		<td>Accepts a function to be calling when form is valid. The context (`this`) is the current verified form and the parameters are respectively `event` and `options`.</td>
+		<td>Function called when the form is valid. The context (<code>this</code>) is the current form. The method should take two parameters: <code>event</code> and <code>options</code>.</td>
 	</tr>
-
 	<tr>
-		<td>invalid</td>
-
-		<td>Accepts a function to be calling when form is invalid. The context (`this`) is the current verified form and the parameters are respectively `event` and `options`.</td>
+		<td><code>invalid</code></td>
+		<td>Function called when the form is invalid. The context (<code>this</code>) is the current form. The method should take two parameters: <code>event</code> and <code>options</code>.</td>
 	</tr>
-
 	<tr>
-		<td>eachField</td>
-
-		<td>Accepts a function to be calling to each field. The context (`this`) is the current verified field and the parameters are respectively `event`, `status` and `options`.</td>
+		<td><code>eachField</code></td>
+		<td>Function called after validation of each field, whether it passes validation or not. The context (<code>this</code>) is the current field. The method should take three parameters: <code>event</code>, <code>status</code> and <code>options</code>.</td>
 	</tr>
-
 	<tr>
-		<td>eachInvalidField</td>
-
-		<td>Accepts a function to be calling when field is invalid. The context (`this`) is the current verified field and the parameters are respectively `event`, `status` and `options`.</td>
+		<td><code>eachInvalidField</code></td>
+		<td>Function called after validation fails on a field. The context (<code>this</code>) is the current field. The method should take three parameters: <code>event</code>, <code>status</code> and <code>options</code>.</td>
 	</tr>
-
 	<tr>
-		<td>eachValidField</td>
-
-		<td>Accepts a function to be calling when field is valid. The context (`this`) is the current verified field and the parameters are respectively `event`, `status` and `options`.</td>
+		<td><code>eachValidField</code></td>
+		<td>Function called after validation succeeds on a field. The context (<code>this</code>) is the current field. The method should take three parameters: <code>event</code>, <code>status</code> and <code>options</code>.</td>
 	</tr>
 </table>
 
-## Removing validation ##
+## Removing Validation ##
 You can remove validation of a form using the `jQuery.fn.validateDestroy` method.
 
-Example:
+**Example**:
 ```javascript
 jQuery('form').validateDestroy();
 ```
 
-## Changing the default values of `jQuery.fn.validate`
-You can changes the default values of `jQuery.fn.validate` using `jQuery.validateSetup` method.
+## Setting Validation Options
+You can change the default values of `jQuery.fn.validate` using the `jQuery.validateSetup` method.
 
-Example:
+**Example**:
 ```javascript
 jQuery.validateSetup({
 	sendForm : false,
@@ -261,15 +204,22 @@ jQuery.validateSetup({
 });
 ```
 
-## Creating descriptions ##
-You can create descriptions to the field states.
+## Creating Descriptions ##
+Descriptions are information describing failures. Using the following `data-*` properties, you can specify which containers describe the failures for a specific field. 
+* `data-describedby`: Set the value of this attribute to the HTML ID of the element that describes the state of this field.
+* `data-description`: Set the value of this attribute to the name of an object inside the `description` object passed to `jQuery.fn.validate`. The object should contain one or more of the the following fields:
+   * `required`: a string containing the content to display inside the describedby element when the field fails validation due to the `data-required` validation.
+   * `pattern`: a string containing the content to display inside the describedby element when the field fails validation due to the `data-pattern` validation.
+   * `conditional`: a string containing the content to display inside the describedby element when the field fails validation due to the `data-conditional` validation.
+   * `valid`: a string containing the content to display inside the describedby element when the field is successfully validated.
 
-Example:
+**Example**:
 ```html
 <form>
-	<input type="text" data-describedby="messages" data-description="test" />
-
-	<span id="messages"></span>
+    <input type="text" 
+	       data-describedby="messages" 
+	       data-description="test" />
+	<div id="messages"></div>
 </form>
 ```
 
@@ -277,19 +227,19 @@ Example:
 $('form').validate({
 	description : {
 		test : {
-			required : '<div class="error">Required</div>',
-			pattern : '<div class="error">Pattern</div>',
+			required    : '<div class="error">Required</div>',
+			pattern     : '<div class="error">Pattern</div>',
 			conditional : '<div class="error">Conditional</div>',
-			valid : '<div class="success">Valid</div>'
+			valid       : '<div class="success">Valid</div>'
 		}
 	}
 });
 ```
 
-## Creating extensions ##
-You can use the `jQuery.validateExtend` method to extend the validations and calling the extensions with `data-validate` attribute.
+## Creating Validation Extensions ##
+You can create your own validation rules by calling the  `jQuery.validateExtend` and passing an object containing validation rules. Invoke the custom validations on fields with the `data-validate` attribute.
 
-Example:
+**Example**:
 ```html
 <form>
 	<input type="text" name="age" data-validate="age" />
@@ -298,13 +248,11 @@ Example:
 
 ```javascript
 jQuery('form').validate();
-
 jQuery.validateExtend({
 	age : {
 		required : true,
 		pattern : /^[0-9]+$/,
 		conditional : function(value) {
-
 			return Number(value) > 17;
 		}
 	}
