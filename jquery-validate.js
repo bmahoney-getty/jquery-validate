@@ -123,8 +123,9 @@
 					}
 				} else {
 					// Pattern match failed.
-					// But if it's not a required field, it's okay if it's empty.
-					if(fieldRequired || fieldValue.length > 0) {
+					if(fieldValue.length == 0) {
+						// Don't fail; let 'required' validation handle the empty case
+					} else {
 						status.pattern = false;
 					}
 				}
@@ -147,26 +148,34 @@
 
 			var
 				describedby = $('#' + fieldDescribedby),
-				message = fieldDescription.valid;
+				message = "";
 
 			// Create the failure/success description HTML
 			if(describedby.length > 0 && event.type !== 'keyup') {
 				if(!status.required) {
-					message = fieldDescription.required;
-				} else if(!status.minlength) {
-					message = fieldDescription.minlength;
-				} else if(!status.maxlength) {
-					message = fieldDescription.maxlength;
-				} else if(!status.pattern) {
-					message = fieldDescription.pattern;
-				} else if(!status.conditional) {
-					message = fieldDescription.conditional;
-				} else if(!status.confirm) {
-					message = fieldDescription.confirm;
+					message += fieldDescription.required;
 				}
-				if(message !== undefined) {
-					describedby.html(message);
+				if(!status.minlength) {
+					message += fieldDescription.minlength;
 				}
+				if(!status.maxlength) {
+					message += fieldDescription.maxlength;
+				}
+				if(!status.pattern) {
+					message += fieldDescription.pattern;
+				}
+				if(!status.conditional) {
+					message += fieldDescription.conditional;
+				}
+				if(!status.confirm) {
+					message += fieldDescription.confirm;
+				}
+			}
+			if (message.length == 0) {
+				message = fieldDescription.valid;
+			}
+			if (message !== undefined) {
+				describedby.html(message);
 			}
 
 			if(typeof(validation.each) === 'function') {
@@ -199,7 +208,6 @@
 				// Call the eachInvalidField callback
 				options.eachInvalidField.call(field, event, status, options);
 			}
-
 			return status;
 		};
 
