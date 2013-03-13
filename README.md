@@ -222,7 +222,7 @@ jQuery.validateSetup({
 
 ## Creating Descriptions ##
 Descriptions are information describing failures. Using the following `data-*` properties, you can specify which containers describe the failures for a specific field. 
-* `data-describedby`: Set the value of this attribute to the HTML ID of the element that describes the state of this field.
+* `data-describedby`: Set the value of this attribute to the HTML `id` of the element that displays validation messages of this field.
 * `data-description`: Set the value of this attribute to the name of an object inside the `description` object passed to `jQuery.fn.validate`. The object should contain one or more of the the following fields:
    * `required`: a string containing the content to display inside the describedby element when the field fails validation due to the `data-required` validation.
    * `pattern`: a string containing the content to display inside the describedby element when the field fails validation due to the `data-pattern` validation.
