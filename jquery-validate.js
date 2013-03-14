@@ -27,15 +27,23 @@
 				// A validation object (jQuery.fn.validateExtend)
 				validation = fieldValidate !== undefined ? extend[fieldValidate] : {},
 
-				fieldPrepare = data.prepare || validation.prepare,
-				fieldPattern = (data.pattern || ($.type(validation.pattern) === 'regexp' ? validation.pattern : /(?:)/)),
-				fieldIgnoreCase = field.prop('data-ignore-case') || data.ignoreCase || validation.ignoreCase,
-				fieldMask = data.mask || validation.mask,
+				fieldPrepare     = data.prepare || validation.prepare,
+				fieldPattern     = (data.pattern || ($.type(validation.pattern) === 'regexp' ?
+				                                     validation.pattern : /(?:)/)),
+				fieldIgnoreCase  = field.prop('data-ignore-case') || data.ignoreCase || validation.ignoreCase,
+				fieldMask        = data.mask || validation.mask,
 				fieldConditional = data.conditional || validation.conditional,
-				fieldRequired = data.required,
-				fieldConfirm = data.confirm || validation.confirm,
-				minlength = Number(data.minlength || validation.minlength || 0),
-				maxlength = Number(data.maxlength || validation.maxlength || Infinity),
+				fieldRequired    = data.required,
+				fieldConfirm     = data.confirm || validation.confirm,
+				minlength        = Number(data.minlength || validation.minlength || 0),
+				maxlength              = Number(data.maxlength || validation.maxlength || Infinity),
+				descriptionValid       = data.descriptionValid,
+				descriptionRequired    = data.descriptionRequired,
+				descriptionPattern     = data.descriptionPattern,
+				descriptionConfirm     = data.descriptionConfirm,
+				descriptionConditional = data.descriptionConditional,
+				descriptionMinlength   = data.descriptionMinlength,
+				descriptionMaxlength   = data.descriptionMaxlength,
 
 				fieldDescribedby = data.describedby || validation.describedby,
 				fieldDescription = data.description || validation.description,
@@ -45,8 +53,20 @@
 				reTrue = /^(true|)$/i,
 				reFalse = /^false$/i;
 
+			$(this).describedby = fieldDescribedby;
+			// Initialize the field description object.
+			fieldDescription = $.isPlainObject(fieldDescription) ?
+			                   fieldDescription : (options.description[fieldDescription] || {});
 
-			fieldDescription = $.isPlainObject(fieldDescription) ? fieldDescription : (options.description[fieldDescription] || {});
+			// Override any Description properties with inline values
+			fieldDescription.valid       = descriptionValid       ? descriptionValid       : fieldDescription.valid;
+			fieldDescription.required    = descriptionRequired    ? descriptionRequired    : fieldDescription.required;
+			fieldDescription.pattern     = descriptionPattern     ? descriptionPattern     : fieldDescription.pattern;
+			fieldDescription.conditional = descriptionConditional ? descriptionConditional : fieldDescription.conditional;
+			fieldDescription.confirm     = descriptionConfirm     ? descriptionConfirm     : fieldDescription.confirm;
+			fieldDescription.minlength   = descriptionMinlength   ? descriptionMinlength   : fieldDescription.minlength;
+			fieldDescription.maxlength   = descriptionMaxlength   ? descriptionMaxlength   : fieldDescription.maxlength;
+
 			fieldRequired    = fieldRequired !== '' ? (fieldRequired || !!validation.required) : true;
 			fieldTrim        = fieldTrim !== '' ? (fieldTrim || !!validation.trim) : true;
 			fieldConfirm     = $('#' + fieldConfirm).length > 0 ? $('#' + fieldConfirm) : $(fieldConfirm);
@@ -151,31 +171,42 @@
 				message = "";
 
 			// Create the failure/success description HTML
-			if(describedby.length > 0 && event.type !== 'keyup') {
-				if(!status.required) {
-					message += fieldDescription.required;
+			if (describedby.length > 0) {
+				if (event.type == 'keyup') {
+					if ($.inArray(event.keyCode, [9,16,17,18,20]) < 0 ) {
+						// Ignore some keys key; for all others, clear the description while editing.
+						//   9:tab; 16:shift; 17:ctrl; 18:alt; 20:caps-lock
+						describedby.html("");
+					}
+				} else {
+					if (!status.required) {
+						message += fieldDescription.required;
+					}
+					if (!status.minlength) {
+						message += fieldDescription.minlength;
+					}
+					if (!status.maxlength) {
+						message += fieldDescription.maxlength;
+					}
+					if (!status.pattern) {
+						message += fieldDescription.pattern;
+					}
+					if (!status.conditional) {
+						message += fieldDescription.conditional;
+					}
+					if (!status.confirm) {
+						message += fieldDescription.confirm;
+					}
+					if (message.length == 0) {
+						message = fieldDescription.valid;
+					}
+					describedby.html(message);
 				}
-				if(!status.minlength) {
-					message += fieldDescription.minlength;
+				if (describedby.html().length == 0) {
+					describedby.hide();
+				} else {
+					describedby.show();
 				}
-				if(!status.maxlength) {
-					message += fieldDescription.maxlength;
-				}
-				if(!status.pattern) {
-					message += fieldDescription.pattern;
-				}
-				if(!status.conditional) {
-					message += fieldDescription.conditional;
-				}
-				if(!status.confirm) {
-					message += fieldDescription.confirm;
-				}
-			}
-			if (message.length == 0) {
-				message = fieldDescription.valid;
-			}
-			if (message !== undefined) {
-				describedby.html(message);
 			}
 
 			if(typeof(validation.each) === 'function') {
